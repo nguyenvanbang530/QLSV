@@ -38,11 +38,4 @@ public class ClassEntity {
     @Column(name = "status")
     int status;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "class_student",
-            joinColumns = @JoinColumn(name = "class_id"),
-            inverseJoinColumns = @JoinColumn(name = "student_id")
-    )
-    List<StudentEntity> students;
 }
