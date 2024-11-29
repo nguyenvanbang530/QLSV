@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Data
@@ -16,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "class")
-public class ClassEntity {
+public class Class {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -38,11 +37,4 @@ public class ClassEntity {
     @Column(name = "status")
     int status;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "class_student",
-            joinColumns = @JoinColumn(name = "class_id"),
-            inverseJoinColumns = @JoinColumn(name = "student_id")
-    )
-    List<StudentEntity> students;
 }

@@ -15,7 +15,7 @@ import java.util.Date;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "students")
-public class StudentEntity {
+public class Student {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

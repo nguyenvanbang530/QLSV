@@ -1,4 +1,4 @@
-package com.example.qlsv.model.request;
+package com.example.qlsv.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;

@@ -17,6 +17,8 @@ import java.util.Date;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class StudentDTO {
 
+    String id;
+
     @Pattern(regexp = "^[0-9]*$", message = "INVALID_MSV")
     @NotNull(message = " MSV_NOTNULL")
     String msv;

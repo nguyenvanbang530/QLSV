@@ -1,4 +1,4 @@
-package com.example.qlsv.model.response;
+package com.example.qlsv.model.vo;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -11,7 +11,8 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class StudentResponse {
+public class StudentVO {
+
     String msv;
 
     String hoten;

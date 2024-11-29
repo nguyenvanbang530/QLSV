@@ -1,23 +1,24 @@
 package com.example.qlsv.service;
 
-import com.example.qlsv.entity.StudentEntity;
+import com.example.qlsv.entity.Student;
 import com.example.qlsv.model.dto.StudentDTO;
-import com.example.qlsv.model.response.StudentResponse;
+import com.example.qlsv.model.vo.StudentVO;
 
 
 import java.util.List;
 public interface StudentService {
 
-     StudentResponse createStudent(StudentDTO studentDTO);
+     StudentVO createStudent(StudentDTO studentDTO);
 
-     StudentResponse updateStudent(String studentid, StudentDTO studentDTO);
+     StudentVO updateStudent(String msv, StudentDTO studentDTO);
 
-     List<StudentEntity> getStudent();
+     List<Student> getStudent();
 
-     StudentResponse getStudenbyId(String id);
+     StudentVO getStudenbyId(String id);
 
-     StudentResponse deleteStudent(String studentid);
+     StudentVO deleteStudent(String studentid);
 
-     List<StudentEntity> findStudentsByHoten(String hoten);
+     List<Student> findStudentsByHoten(String hoten);
 
+     List<Student> findByMultipleFields(String msv, String hoten, String email);
 }

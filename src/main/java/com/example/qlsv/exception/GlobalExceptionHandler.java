@@ -1,7 +1,7 @@
 package com.example.qlsv.exception;
 
 
-import com.example.qlsv.model.request.ApiResponese;
+import com.example.qlsv.model.ApiResponese;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
