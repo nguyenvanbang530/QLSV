@@ -3,6 +3,8 @@ package com.example.qlsv.service;
 import com.example.qlsv.entity.Student;
 import com.example.qlsv.model.dto.StudentDTO;
 import com.example.qlsv.model.vo.StudentVO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 
 import java.util.List;
@@ -14,11 +16,11 @@ public interface StudentService {
 
      List<Student> getStudent();
 
-     StudentVO getStudenbyId(String id);
+     StudentVO getStudenbyMsv(String msv);
 
-     StudentVO deleteStudent(String studentid);
+     StudentVO deleteStudent(String msv);
 
      List<Student> findStudentsByHoten(String hoten);
 
-     List<Student> findByMultipleFields(String msv, String hoten, String email);
+     Page<Student> findByMultipleFields(String msv, String hoten, String email, Pageable pageable);
 }

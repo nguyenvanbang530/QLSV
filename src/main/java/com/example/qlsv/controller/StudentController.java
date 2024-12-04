@@ -8,12 +8,15 @@ import com.example.qlsv.model.vo.StudentVO;
 import com.example.qlsv.service.StudentService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/student")
+@RequestMapping("/api/v1/student")
 public class StudentController {
 
 
@@ -27,10 +30,9 @@ public class StudentController {
     @PostMapping(value = "/create")
     ApiResponese<StudentVO> createStudent(@RequestBody @Valid StudentDTO studentDTO) {
 
-        ApiResponese<StudentVO> apiResponese = new ApiResponese<>();
-
-        apiResponese.setResult(studentService.createStudent(studentDTO));
-        return apiResponese;
+        return ApiResponese.<StudentVO>builder()
+                .result(studentService.createStudent(studentDTO))
+                .build();
     }
 
     @GetMapping(value = "/getall")
@@ -38,49 +40,53 @@ public class StudentController {
         return studentService.getStudent();
     }
 
-    @GetMapping(value = "/getbyid/{studentId}")
-    ApiResponese<StudentVO> getStudentbyId(@PathVariable("studentId") String msv) {
-        ApiResponese<StudentVO> apiResponse = new ApiResponese<>();
-        StudentVO studentResponse = studentService.getStudenbyId(msv);
-        apiResponse.setResult(studentResponse);
-        return apiResponse;
+    @GetMapping(value = "/getbymsv/{studentmsv}")
+    ApiResponese<StudentVO> getStudentbyId(@PathVariable("studentmsv") String msv) {
+        return ApiResponese.<StudentVO>builder()
+                .result(studentService.getStudenbyMsv(msv))
+                .build();
     }
 
     @PostMapping(value = "/update")
     ApiResponese<StudentVO> updateStudent(@RequestBody @Valid StudentDTO studentDTO) {
 
-        ApiResponese<StudentVO> apiResponese = new ApiResponese<>();
-
-        StudentVO updatedStudent = studentService.updateStudent(studentDTO.getId(), studentDTO);
-        apiResponese.setResult(updatedStudent);
-        return apiResponese;
+        return ApiResponese.<StudentVO>builder()
+                .result(studentService.updateStudent(studentDTO.getMsv(),studentDTO))
+                .build();
     }
 
-    @PostMapping("/delete/{studentId}")
-    ApiResponese<StudentVO> deleteStudent(@PathVariable String studentId) {
-        ApiResponese<StudentVO> apiResponse = new ApiResponese<>();
+    @PostMapping("/delete/{studentmsv}")
+    ApiResponese<StudentVO> deleteStudent(@PathVariable String studentmsv) {
 
-        StudentVO deletedStudent = studentService.deleteStudent(studentId);
-        apiResponse.setResult(deletedStudent);
-        return apiResponse;
+        return ApiResponese.<StudentVO>builder()
+                .result(studentService.deleteStudent(studentmsv))
+                .build();
     }
 
     @GetMapping(value = "/search-name")
-    public ApiResponese<List<Student>> searchStudentsByHoten(@RequestParam("hoten") String hoten) {
-        ApiResponese<List<Student>> apiResponse = new ApiResponese<>();
+    ApiResponese<List<Student>> searchStudentsByHoten(@RequestParam("hoten") String hoten) {
+
         List<Student> studentList = studentService.findStudentsByHoten(hoten);
-        apiResponse.setResult(studentList);
-        return apiResponse;
+
+        return ApiResponese.<List<Student>>builder()
+                .result(studentList)
+                .build();
     }
 
     @GetMapping(value = "/search-students")
-    public ApiResponese<List<Student>> findByMultipleFields(@RequestParam(value = "msv", required = false) String msv,
-                                                            @RequestParam(value = "hoten", required = false) String hoten,
-                                                            @RequestParam(value = "email", required = false) String email) {
-        ApiResponese<List<Student>> apiResponse = new ApiResponese<>();
-        List<Student> studentList = studentService.findByMultipleFields(msv, hoten , email);
-        apiResponse.setResult(studentList);
-        return apiResponse;
+    public ApiResponese<Page<Student>> findByMultipleFields(
+            @RequestParam(value = "msv", required = false) String msv,
+            @RequestParam(value = "hoten", required = false) String hoten,
+            @RequestParam(value = "email", required = false) String email,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Student> studentPage = studentService.findByMultipleFields(msv, hoten, email, pageable);
+
+        ApiResponese<Page<Student>> apiResponse = new ApiResponese<>();
+        apiResponse.setResult(studentPage);
+
+         return apiResponse;
     }
 }
-

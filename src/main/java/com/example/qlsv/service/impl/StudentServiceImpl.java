@@ -4,12 +4,16 @@ import com.example.qlsv.entity.Student;
 import com.example.qlsv.exception.AppException;
 import com.example.qlsv.exception.ErrorCode;
 //import com.example.qlsv.mapper.StudentMapper;
-import com.example.qlsv.mapper.StudentModelMapper;
+
 import com.example.qlsv.model.dto.StudentDTO;
 import com.example.qlsv.model.vo.StudentVO;
 import com.example.qlsv.repository.StudentRepository;
 import com.example.qlsv.service.StudentService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,8 +26,6 @@ public class StudentServiceImpl implements StudentService {
     @Autowired
     private StudentRepository studentRepository;
 
-    @Autowired
-    private StudentModelMapper studentModelMapper;
 
 //    @Autowired
 //    private StudentMapper studentMapper;
@@ -31,6 +33,8 @@ public class StudentServiceImpl implements StudentService {
     @Override
     @Transactional
     public StudentVO createStudent(StudentDTO studentDTO){
+
+        ModelMapper mapper = new ModelMapper();
 
         if (studentRepository.existsByhoten(studentDTO.getHoten())){
             throw new AppException(ErrorCode.STUDENT_EXISTED);
@@ -43,35 +47,32 @@ public class StudentServiceImpl implements StudentService {
         if (studentRepository.existsByEmail(studentDTO.getEmail())){
             throw new AppException(ErrorCode.EMAIL_EXISTED);
         }
-        Student studentEntity = studentModelMapper.toEntity(studentDTO);
+            StudentVO studentVO = mapper.map(studentDTO,StudentVO.class);
 
-        return studentModelMapper.toVO(studentRepository.save(studentEntity));
+            return studentVO;
     }
     @Override
     @Transactional
-    public StudentVO updateStudent(String studentId, StudentDTO studentDTO){
+    public StudentVO updateStudent(String studentmsv, StudentDTO studentDTO){
 
-        Student studentEntity = studentRepository.findById(studentId)
+        ModelMapper mapper = new ModelMapper();
+
+        Student studentEntity = studentRepository.findByMsv(studentmsv)
                 .orElseThrow(() -> new AppException(ErrorCode.NO_STUDENT_FOUND));
 
-        boolean duplicateMsvExists = studentRepository.existsByMsvAndIdNot(studentDTO.getMsv(), studentId);
-        if (duplicateMsvExists) {
-            throw new AppException(ErrorCode.DUPLICATE_STUDENT_MSV);
-        }
-
-        boolean duplicatehotenExists = studentRepository.existsByhotenAndIdNot(studentDTO.getHoten(), studentId);
+        boolean duplicatehotenExists = studentRepository.existsByhotenAndIdNot(studentDTO.getHoten(), studentmsv);
         if (duplicatehotenExists) {
             throw new AppException(ErrorCode.DUPLICATE_STUDENT_HO_TEN);
         }
 
-        boolean duplicateemailExists = studentRepository.existsByemailAndIdNot(studentDTO.getEmail(), studentId);
+        boolean duplicateemailExists = studentRepository.existsByemailAndIdNot(studentDTO.getEmail(), studentmsv);
         if (duplicateemailExists) {
             throw new AppException(ErrorCode.DUPLICATE_STUDENT_EMAIL);
         }
 
-        studentModelMapper.updateEntity(studentEntity,studentDTO);
+        StudentVO studentVO = mapper.map(studentDTO,StudentVO.class);
 
-        return studentModelMapper.toVO(studentRepository.save(studentEntity));
+        return studentVO;
 
     }
     @Override
@@ -79,20 +80,25 @@ public class StudentServiceImpl implements StudentService {
         return studentRepository.findAll();
     }
     @Override
-    public StudentVO getStudenbyId(String id){
-        Student student = studentRepository.findById(id)
+    public StudentVO getStudenbyMsv(String msv){
+
+        ModelMapper mapper = new ModelMapper();
+
+        Student student = studentRepository.findByMsv(msv)
                 .orElseThrow(() -> new AppException(ErrorCode.NO_STUDENT_FOUND));
-                return studentModelMapper.toVO(student);
+
+        StudentVO studentVO = mapper.map(student,StudentVO.class);
+                return studentVO;
     }
     @Override
-    public StudentVO deleteStudent(String studentId){
+    public StudentVO deleteStudent(String msv){
 
-        Optional<Student> studentOptional  = studentRepository.findById(studentId);
+        Optional<Student> studentOptional  = studentRepository.findByMsv(msv);
 
         if (studentOptional .isPresent()){
             Student studentEntity = studentOptional.get();
             if (studentEntity.getStatus() == 0){
-                studentRepository.deleteById(studentId);
+                studentRepository.delete(studentEntity);
             }else {
                 throw new AppException(ErrorCode.CANNOT_DELETE_STUDENT_WHIT_STATUS_IS_1);
             }
@@ -115,13 +121,13 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<Student> findByMultipleFields(String msv, String hoten, String email) {
+    public Page<Student> findByMultipleFields(String msv, String hoten, String email, Pageable pageable) {
+        Page<Student> students = studentRepository.searchByMultipleFields(msv, hoten, email, pageable);
 
-        List<Student> students = studentRepository.searchByMultipleFields(msv, hoten , email);
-
-        if (students.isEmpty()){
+        if (students.isEmpty()) {
             throw new AppException(ErrorCode.NO_STUDENT_FOUND);
         }
+
         return students;
     }
 }
