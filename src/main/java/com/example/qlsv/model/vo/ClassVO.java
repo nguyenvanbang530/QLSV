@@ -1,10 +1,9 @@
-package com.example.qlsv.model.dto;
+package com.example.qlsv.model.vo;
 
-import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok                                       .NoArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
@@ -13,10 +12,8 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ClassDTO {
+public class ClassVO {
 
-    String id;
-    @Size(min = 3,message = "Tên Lớp không được dưới 3 kí tự")
     String tenlop;
 
     String mota;
@@ -26,4 +23,5 @@ public class ClassDTO {
     Date updatedAT;
 
     int status;
+
 }
