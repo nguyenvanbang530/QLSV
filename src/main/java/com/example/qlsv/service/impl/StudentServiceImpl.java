@@ -5,6 +5,7 @@ import com.example.qlsv.exception.AppException;
 import com.example.qlsv.exception.ErrorCode;
 //import com.example.qlsv.mapper.StudentMapper;
 
+import com.example.qlsv.model.dto.SearchStudentDTO;
 import com.example.qlsv.model.dto.StudentDTO;
 import com.example.qlsv.model.vo.StudentVO;
 import com.example.qlsv.repository.StudentRepository;
@@ -29,12 +30,13 @@ public class StudentServiceImpl implements StudentService {
 
 //    @Autowired
 //    private StudentMapper studentMapper;
+    ModelMapper mapper = new ModelMapper();
 
     @Override
     @Transactional
     public StudentVO createStudent(StudentDTO studentDTO){
 
-        ModelMapper mapper = new ModelMapper();
+
 
         if (studentRepository.existsByhoten(studentDTO.getHoten())){
             throw new AppException(ErrorCode.STUDENT_EXISTED);
@@ -54,8 +56,6 @@ public class StudentServiceImpl implements StudentService {
     @Override
     @Transactional
     public StudentVO updateStudent(String studentmsv, StudentDTO studentDTO){
-
-        ModelMapper mapper = new ModelMapper();
 
         Student studentEntity = studentRepository.findByMsv(studentmsv)
                 .orElseThrow(() -> new AppException(ErrorCode.NO_STUDENT_FOUND));
@@ -121,13 +121,16 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Page<Student> findByMultipleFields(String msv, String hoten, String email, Pageable pageable) {
-        Page<Student> students = studentRepository.searchByMultipleFields(msv, hoten, email, pageable);
+    public Page<Student> searchStudent(SearchStudentDTO searchStudentDTO) {
+        String msv = searchStudentDTO.getMsv();
+        String hoten = searchStudentDTO.getHoten();
+        String email = searchStudentDTO.getEmail();
 
-        if (students.isEmpty()) {
-            throw new AppException(ErrorCode.NO_STUDENT_FOUND);
-        }
+        int page = searchStudentDTO.getPage();
+        int size = searchStudentDTO.getSize();
 
-        return students;
+        Pageable pageable = PageRequest.of(page, size);
+
+        return studentRepository.search(msv, hoten, email, pageable);
     }
 }

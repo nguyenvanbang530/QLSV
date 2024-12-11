@@ -31,7 +31,7 @@ public interface StudentRepository extends JpaRepository<Student,String> {
             "(s.msv IS NULL OR (s.msv) LIKE CONCAT('%', (:msv), '%')) AND " +
             "(s.hoten IS NULL OR (s.hoten) LIKE CONCAT('%', (:hoten), '%')) AND " +
             "(s.email IS NULL OR (s.email) LIKE CONCAT('%', (:email), '%'))")
-    Page<Student> searchByMultipleFields(@Param("msv") String msv,
+                    Page<Student>search(@Param("msv") String msv,
                                          @Param("hoten") String hoten,
                                          @Param("email") String email, Pageable pageable);
 }

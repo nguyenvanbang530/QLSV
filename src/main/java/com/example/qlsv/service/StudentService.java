@@ -1,6 +1,7 @@
 package com.example.qlsv.service;
 
 import com.example.qlsv.entity.Student;
+import com.example.qlsv.model.dto.SearchStudentDTO;
 import com.example.qlsv.model.dto.StudentDTO;
 import com.example.qlsv.model.vo.StudentVO;
 import org.springframework.data.domain.Page;
@@ -22,5 +23,5 @@ public interface StudentService {
 
      List<Student> findStudentsByHoten(String hoten);
 
-     Page<Student> findByMultipleFields(String msv, String hoten, String email, Pageable pageable);
+     Page<Student> searchStudent(SearchStudentDTO searchStudentDTO);
 }

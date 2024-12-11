@@ -2,6 +2,7 @@ package com.example.qlsv.controller;
 
 
 import com.example.qlsv.entity.Student;
+import com.example.qlsv.model.dto.SearchStudentDTO;
 import com.example.qlsv.model.dto.StudentDTO;
 import com.example.qlsv.model.ApiResponese;
 import com.example.qlsv.model.vo.StudentVO;
@@ -73,20 +74,8 @@ public class StudentController {
                 .build();
     }
 
-    @GetMapping(value = "/search-students")
-    public ApiResponese<Page<Student>> findByMultipleFields(
-            @RequestParam(value = "msv", required = false) String msv,
-            @RequestParam(value = "hoten", required = false) String hoten,
-            @RequestParam(value = "email", required = false) String email,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Student> studentPage = studentService.findByMultipleFields(msv, hoten, email, pageable);
-
-        ApiResponese<Page<Student>> apiResponse = new ApiResponese<>();
-        apiResponse.setResult(studentPage);
-
-         return apiResponse;
+    @GetMapping("/search")
+    public Page<Student> searchStudents(SearchStudentDTO searchStudentDTO) {
+        return studentService.searchStudent(searchStudentDTO);
     }
 }

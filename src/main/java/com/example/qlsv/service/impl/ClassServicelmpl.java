@@ -17,13 +17,12 @@ public class ClassServicelmpl implements ClassService {
     @Autowired
     ClassRepository classRepository;
 
-
+     ModelMapper mapper = new ModelMapper();
 
     @Override
     @Transactional
     public ClassEntity createClass(ClassDTO classDTO) {
 
-        ModelMapper mapper = new ModelMapper();
         ClassEntity classEntity = mapper.map(classDTO, ClassEntity.class);
         classEntity.setId(UUID.randomUUID().toString());
         classRepository.save(classEntity);
@@ -36,7 +35,6 @@ public class ClassServicelmpl implements ClassService {
     @Transactional
     public ClassEntity updateClass(ClassDTO classDTO) {
 
-        ModelMapper mapper = new ModelMapper();
         Optional<ClassEntity> classDTO1 = classRepository.findById(classDTO.getId());
         if (classDTO1.isEmpty()){
             throw new RuntimeException("id khong ton tai");
